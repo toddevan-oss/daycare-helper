@@ -162,7 +162,7 @@ def generate_pdf(config, sheet_date, naps, feedings, notes):
         widths = [20, 60, 60, 40]
         table_header(pdf, ["#", "Start Time", "Target Duration", "Wake Window Note"], widths)
         for idx, nap in enumerate(naps):
-            table_row(pdf, [str(nap["num"]), nap["start"], nap["duration"], ""], widths, shade=idx % 2 == 1)
+                table_row(pdf, [str(nap["num"]), nap["start"], nap["duration"], nap.get("wake_note", "")], widths, shade=idx % 2 == 1)
     else:
         pdf.set_font("Helvetica", "I", 10)
         pdf.set_text_color(130, 130, 130)
@@ -175,7 +175,7 @@ def generate_pdf(config, sheet_date, naps, feedings, notes):
         widths = [45, 40, 55, 40]
         table_header(pdf, ["Time", "Amount", "Type", "Notes"], widths)
         for idx, f in enumerate(feedings):
-            table_row(pdf, [f["time"], f["amount"], f["type"], ""], widths, shade=idx % 2 == 1)
+            table_row(pdf, [f["time"], f["amount"], f["type"], f.get("note", "")], widths, shade=idx % 2 == 1)
     else:
         pdf.set_font("Helvetica", "I", 10)
         pdf.set_text_color(130, 130, 130)
