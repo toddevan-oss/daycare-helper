@@ -55,7 +55,7 @@ def collect_naps():
         start = input(f"  Nap {i} start time (e.g. 10:00am, leave blank to finish): ").strip()
         if not start:
             break
-        duration = prompt(f"  Nap {i} target duration (e.g. 1h 30min)", "—")
+        duration = prompt(f"  Nap {i} target duration (e.g. 1h 30min)", "-")
         naps.append({"num": i, "start": start, "duration": duration})
         i += 1
     return naps
@@ -70,7 +70,7 @@ def collect_feedings():
         time = input(f"  Feeding {i} time (e.g. 8:00am, leave blank to finish): ").strip()
         if not time:
             break
-        amount = prompt(f"  Feeding {i} amount (e.g. 4oz or 10 min)", "—")
+        amount = prompt(f"  Feeding {i} amount (e.g. 4oz or 10 min)", "-")
         ftype = prompt(f"  Feeding {i} type", "breast milk")
         feedings.append({"time": time, "amount": amount, "type": ftype})
         i += 1
@@ -86,12 +86,17 @@ GRAY_FILL = (242, 242, 242)
 BORDER_COLOR = (180, 180, 180)
 
 
+def safe(text):
+    """Strip characters unsupported by Helvetica (latin-1 only)."""
+    return text.encode("latin-1", errors="replace").decode("latin-1")
+
+
 def section_header(pdf, title):
     pdf.ln(3)
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_fill_color(*BLUE_FILL)
     pdf.set_draw_color(*BORDER_COLOR)
-    pdf.cell(0, 9, f"  {title}", border=1, fill=True,
+    pdf.cell(0, 9, safe(f"  {title}"), border=1, fill=True,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(2)
 
@@ -101,7 +106,7 @@ def table_header(pdf, headers, widths):
     pdf.set_fill_color(*GRAY_FILL)
     pdf.set_draw_color(*BORDER_COLOR)
     for header, width in zip(headers, widths):
-        pdf.cell(width, 7, f"  {header}", border=1, fill=True,
+        pdf.cell(width, 7, safe(f"  {header}"), border=1, fill=True,
                  new_x=XPos.RIGHT, new_y=YPos.LAST)
     pdf.ln()
 
@@ -114,7 +119,7 @@ def table_row(pdf, values, widths, shade=False):
         pdf.set_fill_color(255, 255, 255)
     pdf.set_draw_color(*BORDER_COLOR)
     for value, width in zip(values, widths):
-        pdf.cell(width, 7, f"  {value}", border=1, fill=True,
+        pdf.cell(width, 7, safe(f"  {value}"), border=1, fill=True,
                  new_x=XPos.RIGHT, new_y=YPos.LAST)
     pdf.ln()
 
@@ -185,14 +190,14 @@ def generate_pdf(config, sheet_date, naps, feedings, notes):
         for i, instruction in enumerate(instructions, 1):
             pdf.set_x(15)
             pdf.cell(8, 6, f"{i}.", new_x=XPos.RIGHT, new_y=YPos.LAST)
-            pdf.multi_cell(0, 6, instruction, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            pdf.multi_cell(0, 6, safe(instruction), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.ln(1)
 
     # ---- Notes ----
     section_header(pdf, "Notes for Today")
     if notes:
         pdf.set_font("Helvetica", "", 10)
-        pdf.multi_cell(0, 6, notes, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.multi_cell(0, 6, safe(notes), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     else:
         # blank ruled lines for handwriting
         for _ in range(4):

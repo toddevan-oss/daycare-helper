@@ -128,12 +128,12 @@ with tab_daily:
     # ---- Generate PDF ----
     if st.button("Generate PDF", type="primary", use_container_width=True):
         naps = [
-            {"num": i+1, "start": n["start"], "duration": n["duration"] or "—"}
+            {"num": i+1, "start": n["start"], "duration": n["duration"] or "-"}
             for i, n in enumerate(st.session_state.naps)
             if n["start"].strip()
         ]
         feedings = [
-            {"time": f["time"], "amount": f["amount"] or "—", "type": f["type"] or "breast milk"}
+            {"time": f["time"], "amount": f["amount"] or "-", "type": f["type"] or "breast milk"}
             for f in st.session_state.feedings
             if f["time"].strip()
         ]
